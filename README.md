@@ -17,7 +17,7 @@ Agents with subagent tools tend to fail in one of two directions: they spawn age
 | 3. Parallel subagents | Multiple genuinely independent strands of work. |
 | 4. Workflow orchestration | Structured fan-out at scale, **and** the user explicitly opted in. |
 
-Every step up costs latency, tokens, and context-transfer overhead — a subagent starts with zero knowledge of the conversation. The skill spells out the heuristics for each rung: which searches earn a subagent, why single-fact lookups never do, when to fan out in parallel, and the two hard gates a Workflow must pass (explicit user opt-in plus a task shape that needs deterministic orchestration).
+Every step up costs latency, tokens, and context-transfer overhead — a subagent starts with zero knowledge of the conversation. The skill spells out the heuristics for each rung: which searches earn a subagent, why single-fact lookups never do, how to write the hand-off prompt, when parallel fan-out pays (and how to keep parallel writers from clobbering each other), and the two hard gates a Workflow must pass (explicit user opt-in plus a task shape that needs deterministic orchestration).
 
 The full text is in [`delegation-strategy/SKILL.md`](delegation-strategy/SKILL.md) — about 50 lines, loaded only when the agent is planning a task that could involve delegation.
 
