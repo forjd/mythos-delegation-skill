@@ -1,0 +1,28 @@
+{
+  "name": "mythos-delegation-skill",
+  "version": "0.1.0",
+  "description": "A Codex plugin that teaches agents when to work inline, delegate to subagents, or use workflow orchestration.",
+  "author": {
+    "name": "forjd",
+    "url": "https://github.com/forjd"
+  },
+  "homepage": "https://github.com/forjd/mythos-delegation-skill",
+  "repository": "https://github.com/forjd/mythos-delegation-skill",
+  "license": "MIT",
+  "keywords": ["agents", "skills", "delegation", "subagents", "codex"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Delegation Strategy",
+    "shortDescription": "Choose the right level of agent delegation",
+    "longDescription": "Delegation Strategy helps coding agents choose between inline work, one subagent, parallel subagents, and workflow orchestration. It keeps simple lookups cheap while preserving context for wide searches, independent review strands, and large fan-out tasks.",
+    "developerName": "forjd",
+    "category": "Productivity",
+    "capabilities": ["Plan", "Write"],
+    "defaultPrompt": [
+      "Use delegation strategy for this task.",
+      "Decide whether this needs subagents.",
+      "Plan the cheapest delegation level."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

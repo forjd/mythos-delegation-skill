@@ -19,9 +19,21 @@ Agents with subagent tools tend to fail in one of two directions: they spawn age
 
 Every step up costs latency, tokens, and context-transfer overhead — a subagent starts with zero knowledge of the conversation. The skill spells out the heuristics for each rung: which searches earn a subagent, why single-fact lookups never do, how to write the hand-off prompt, when parallel fan-out pays (and how to keep parallel writers from clobbering each other), and the two hard gates a Workflow must pass (explicit user opt-in plus a task shape that needs deterministic orchestration).
 
-The full text is in [`delegation-strategy/SKILL.md`](delegation-strategy/SKILL.md) — about 50 lines, loaded only when the agent is planning a task that could involve delegation. Codex and ChatGPT-compatible skill metadata lives in [`delegation-strategy/agents/openai.yaml`](delegation-strategy/agents/openai.yaml).
+The full text is in [`skills/delegation-strategy/SKILL.md`](skills/delegation-strategy/SKILL.md) — about 50 lines, loaded only when the agent is planning a task that could involve delegation. Codex and ChatGPT-compatible skill metadata lives in [`skills/delegation-strategy/agents/openai.yaml`](skills/delegation-strategy/agents/openai.yaml), and the Codex plugin manifest lives in [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json).
 
 ## Install
+
+### Codex / ChatGPT-compatible plugin
+
+This repo is a Codex plugin as well as a standalone Agent Skill. The plugin manifest is at `.codex-plugin/plugin.json` and exposes skills from `./skills/`.
+
+This is a Codex plugin bundle for skills. It is not a legacy ChatGPT `ai-plugin.json` plugin or a custom GPT Action, because this skill does not expose an external API.
+
+Clone the repo, then install or add it through your Codex plugin flow as a local or Git-backed plugin. The plugin name is `mythos-delegation-skill`; the bundled skill remains `delegation-strategy`.
+
+After install, ask Codex to use `$delegation-strategy`, or let it trigger implicitly when the task involves subagents, parallel review, large searches, or orchestration decisions.
+
+### Agent Skills / skills.sh
 
 With the [skills.sh](https://skills.sh) CLI (the skill installs under its spec name, `delegation-strategy`):
 
@@ -37,18 +49,16 @@ bunx skills add forjd/mythos-delegation-skill
 
 Add `-g` to install user-level (active in every project) rather than project-level.
 
-### Codex / ChatGPT-compatible install
+### Manual Codex skill install
 
-For Codex, copy or symlink the skill directory into your Codex skills folder:
+For a direct skill install without the plugin wrapper, copy or symlink the skill directory into your Codex skills folder:
 
 ```sh
 git clone https://github.com/forjd/mythos-delegation-skill.git
 mkdir -p "${CODEX_HOME:-$HOME/.codex}/skills"
-ln -s "$(pwd)/mythos-delegation-skill/delegation-strategy" \
+ln -s "$(pwd)/mythos-delegation-skill/skills/delegation-strategy" \
   "${CODEX_HOME:-$HOME/.codex}/skills/delegation-strategy"
 ```
-
-Then ask Codex to use `$delegation-strategy`, or let it trigger implicitly when the task involves subagents, parallel review, large searches, or orchestration decisions.
 
 ### Claude Code install
 
@@ -56,7 +66,7 @@ Clone this repo, then symlink the skill directory into Claude Code's skills dire
 
 ```sh
 git clone https://github.com/forjd/mythos-delegation-skill.git
-ln -s "$(pwd)/mythos-delegation-skill/delegation-strategy" ~/.claude/skills/delegation-strategy
+ln -s "$(pwd)/mythos-delegation-skill/skills/delegation-strategy" ~/.claude/skills/delegation-strategy
 ```
 
 For a single project, copy or symlink `delegation-strategy/` into that repo's `.claude/skills/` instead.
@@ -73,10 +83,15 @@ The ladder degrades gracefully. Agents without a workflow tool emulate rung 4 wi
 
 ```
 mythos-delegation-skill/
+├── .codex-plugin/
+│   └── plugin.json       # Codex / ChatGPT-compatible plugin manifest
 ├── delegation-strategy/
-│   ├── agents/
-│   │   └── openai.yaml   # Codex / ChatGPT-compatible UI metadata
-│   └── SKILL.md          # the skill: frontmatter + instructions
+│   └── -> skills/delegation-strategy
+├── skills/
+│   └── delegation-strategy/
+│       ├── agents/
+│       │   └── openai.yaml   # Codex / ChatGPT-compatible skill metadata
+│       └── SKILL.md          # the skill: frontmatter + instructions
 ├── LICENSE
 └── README.md
 ```
@@ -86,16 +101,17 @@ mythos-delegation-skill/
 The skill follows the [Agent Skills specification](https://agentskills.io/specification). To validate after editing:
 
 ```sh
-npx skills-ref validate ./delegation-strategy
+npx skills-ref validate ./skills/delegation-strategy
 ```
 
 For Codex compatibility, also run the Codex skill validator if available:
 
 ```sh
-python3 /path/to/skill-creator/scripts/quick_validate.py ./delegation-strategy
+python3 /path/to/skill-creator/scripts/quick_validate.py ./skills/delegation-strategy
+python3 /path/to/plugin-creator/scripts/validate_plugin.py .
 ```
 
-Codex uses only the `name` and `description` frontmatter fields to decide when to load a skill, so keep trigger wording in `description` and UI-facing metadata in `delegation-strategy/agents/openai.yaml`.
+Codex uses only the `name` and `description` frontmatter fields to decide when to load a skill, so keep trigger wording in `description`, UI-facing skill metadata in `skills/delegation-strategy/agents/openai.yaml`, and plugin-facing metadata in `.codex-plugin/plugin.json`.
 
 Issues and PRs welcome — especially counterexamples where the ladder gives the wrong answer.
 
