@@ -2,7 +2,7 @@
 
 A Claude Code agent skill: a decision guide for when to work inline, spawn subagents, run agents in parallel, or escalate to Workflow orchestration. Distilled from the Claude Fable 5 harness guidance.
 
-The skill itself is [SKILL.md](SKILL.md).
+The skill itself is [delegation-strategy/SKILL.md](delegation-strategy/SKILL.md).
 
 ## Install
 
@@ -20,10 +20,10 @@ Add `-g` to install user-level (available in every project) instead of project-l
 
 ### Manual install
 
-**User-level** — clone this repo and symlink it into your skills directory:
+**User-level** — clone this repo and symlink the skill directory into your skills directory:
 
 ```sh
-ln -s "$(pwd)" ~/.claude/skills/delegation-strategy
+ln -s "$(pwd)/delegation-strategy" ~/.claude/skills/delegation-strategy
 ```
 
-**Project-level** — copy or symlink it into a repo's `.claude/skills/delegation-strategy/`.
+**Project-level** — copy or symlink `delegation-strategy/` into a repo's `.claude/skills/`.

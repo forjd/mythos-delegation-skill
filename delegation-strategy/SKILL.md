@@ -1,6 +1,7 @@
 ---
 name: delegation-strategy
 description: Decision guide for choosing between inline work, subagents (Agent tool), parallel agents, and Workflow orchestration. Use when planning a task that could involve searching many files, independent parallel strands, large-scale fan-out, or when tempted to spawn agents — to pick the cheapest level that fits.
+license: MIT
 ---
 
 # Delegation strategy
