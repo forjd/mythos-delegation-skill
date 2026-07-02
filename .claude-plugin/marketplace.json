@@ -1,0 +1,17 @@
+{
+  "name": "mythos-delegation",
+  "description": "Marketplace for the delegation-strategy Agent Skill: choose between inline work, subagents, parallel fan-out, and workflow orchestration.",
+  "owner": {
+    "name": "forjd",
+    "url": "https://github.com/forjd"
+  },
+  "plugins": [
+    {
+      "name": "mythos-delegation-skill",
+      "source": "./",
+      "description": "Teaches agents when to work inline, delegate to subagents, or use workflow orchestration.",
+      "category": "productivity",
+      "keywords": ["agents", "skills", "delegation", "subagents", "orchestration"]
+    }
+  ]
+}

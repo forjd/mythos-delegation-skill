@@ -1,0 +1,14 @@
+{
+  "name": "mythos-delegation-skill",
+  "displayName": "Delegation Strategy",
+  "version": "0.1.0",
+  "description": "Teaches agents when to work inline, delegate to subagents, or use workflow orchestration.",
+  "author": {
+    "name": "forjd",
+    "url": "https://github.com/forjd"
+  },
+  "homepage": "https://github.com/forjd/mythos-delegation-skill",
+  "repository": "https://github.com/forjd/mythos-delegation-skill",
+  "license": "MIT",
+  "keywords": ["agents", "skills", "delegation", "subagents", "orchestration"]
+}

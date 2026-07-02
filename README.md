@@ -19,7 +19,7 @@ Agents with subagent tools tend to fail in one of two directions: they spawn age
 
 Every step up costs latency, tokens, and context-transfer overhead — a subagent starts with zero knowledge of the conversation. The skill spells out the heuristics for each rung: which searches earn a subagent, why single-fact lookups never do, how to write the hand-off prompt, when parallel fan-out pays (and how to keep parallel writers from clobbering each other), and the two hard gates a Workflow must pass (explicit user opt-in plus a task shape that needs deterministic orchestration).
 
-The full text is in [`skills/delegation-strategy/SKILL.md`](skills/delegation-strategy/SKILL.md) — about 50 lines, loaded only when the agent is planning a task that could involve delegation. Codex and ChatGPT-compatible skill metadata lives in [`skills/delegation-strategy/agents/openai.yaml`](skills/delegation-strategy/agents/openai.yaml), and the Codex plugin manifest lives in [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json).
+The full text is in [`skills/delegation-strategy/SKILL.md`](skills/delegation-strategy/SKILL.md) — about 50 lines, loaded only when the agent is planning a task that could involve delegation. Codex and ChatGPT-compatible skill metadata lives in [`skills/delegation-strategy/agents/openai.yaml`](skills/delegation-strategy/agents/openai.yaml), the Codex plugin manifest lives in [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json), and the Claude Code plugin manifest lives in [`.claude-plugin/plugin.json`](.claude-plugin/plugin.json).
 
 ## Install
 
@@ -60,9 +60,27 @@ ln -s "$(pwd)/mythos-delegation-skill/skills/delegation-strategy" \
   "${CODEX_HOME:-$HOME/.codex}/skills/delegation-strategy"
 ```
 
-### Claude Code install
+### Claude Code plugin (marketplace)
 
-Clone this repo, then symlink the skill directory into Claude Code's skills directory. For user-level install:
+This repo is also a Claude Code plugin and its own plugin marketplace (`.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`). Inside Claude Code:
+
+```
+/plugin marketplace add forjd/mythos-delegation-skill
+/plugin install mythos-delegation-skill@mythos-delegation
+```
+
+or from the shell:
+
+```sh
+claude plugin marketplace add forjd/mythos-delegation-skill
+claude plugin install mythos-delegation-skill@mythos-delegation
+```
+
+The plugin's `skills/` directory is auto-discovered, so installing the plugin registers the `delegation-strategy` skill.
+
+### Manual Claude Code skill install
+
+To install the skill directly without the plugin, clone this repo and symlink the skill directory into Claude Code's skills directory. For user-level install:
 
 ```sh
 git clone https://github.com/forjd/mythos-delegation-skill.git
@@ -83,6 +101,9 @@ The ladder degrades gracefully. Agents without a workflow tool emulate rung 4 wi
 
 ```
 mythos-delegation-skill/
+├── .claude-plugin/
+│   ├── plugin.json       # Claude Code plugin manifest
+│   └── marketplace.json  # Claude Code plugin marketplace (this repo as a marketplace)
 ├── .codex-plugin/
 │   └── plugin.json       # Codex / ChatGPT-compatible plugin manifest
 ├── delegation-strategy/
@@ -102,6 +123,12 @@ The skill follows the [Agent Skills specification](https://agentskills.io/specif
 
 ```sh
 npx skills-ref validate ./skills/delegation-strategy
+```
+
+To validate the Claude Code plugin and marketplace manifests:
+
+```sh
+claude plugin validate .
 ```
 
 For Codex compatibility, also run the Codex skill validator if available:
