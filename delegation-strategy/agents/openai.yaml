@@ -1,0 +1,4 @@
+interface:
+  display_name: "Delegation Strategy"
+  short_description: "Choose when to delegate agent work"
+  default_prompt: "Use $delegation-strategy to decide the right level of inline work, subagents, or orchestration for this task."
