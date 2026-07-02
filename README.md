@@ -15,7 +15,7 @@ Agents with subagent tools tend to fail in one of two directions: they spawn age
 | 1. Do it yourself | You know where to look, the work is linear, or it's small. **The default.** |
 | 2. One subagent | The search is wide but the answer is narrow, or a specialized agent type fits. |
 | 3. Parallel subagents | Multiple genuinely independent strands of work. |
-| 4. Workflow | Structured fan-out at scale, **and** the user explicitly opted in. |
+| 4. Workflow orchestration | Structured fan-out at scale, **and** the user explicitly opted in. |
 
 Every step up costs latency, tokens, and context-transfer overhead — a subagent starts with zero knowledge of the conversation. The skill spells out the heuristics for each rung: which searches earn a subagent, why single-fact lookups never do, when to fan out in parallel, and the two hard gates a Workflow must pass (explicit user opt-in plus a task shape that needs deterministic orchestration).
 
@@ -53,6 +53,8 @@ For a single project, copy or symlink `delegation-strategy/` into that repo's `.
 Agent Skills load progressively. At startup the agent sees only the skill's name and description (~100 tokens); the description is written to trigger when the agent is planning work that could involve searching many files, parallel strands, or large fan-out. Only then does the agent load the full instructions.
 
 The skill is distilled from the delegation guidance in Anthropic's Claude Fable 5 harness prompt. It's most useful for agents that *don't* carry that guidance natively: subagents of subagents, SDK-built agents, and other Agent Skills–compatible tools.
+
+The ladder degrades gracefully. Agents without a workflow tool emulate rung 4 with batches of parallel subagents (the user-opt-in rule still applies); agents with no subagent tools at all get the rung-1 principles — context hygiene, and telling the user when a task is really a fan-out job their tooling can't express.
 
 ## Repository layout
 

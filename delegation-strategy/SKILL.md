@@ -8,12 +8,14 @@ license: MIT
 
 Pick the **lowest rung** on this ladder that fits the task. Every step up costs latency, tokens, and context-transfer overhead — a subagent starts with zero knowledge of the conversation.
 
+The ladder only goes as high as your harness's tools. Before climbing, check what you actually have — subagent spawning? parallel execution? a workflow/orchestration tool? — and treat your highest supported rung as the ceiling. If a rung is missing, see "Degrading gracefully" below.
+
 ## The ladder
 
 1. **Do it yourself** (default) — you know where to look, the work is linear, or it's small.
 2. **One subagent** — the search is wide but the answer is narrow, or a specialized agent type fits.
 3. **Parallel subagents** — multiple genuinely independent strands of work.
-4. **Workflow** — structured fan-out at scale, AND the user explicitly opted in.
+4. **Workflow orchestration** (e.g. Claude Code's `Workflow` tool) — structured fan-out at scale, AND the user explicitly opted in.
 
 ## When a subagent earns its cost
 
@@ -26,14 +28,21 @@ The core trade-off is **context economy vs. directness**. An agent burns its own
 - **Don't duplicate.** Once you've delegated a search, don't also run it yourself. Wait for the result.
 - **Continue, don't respawn.** Use SendMessage to follow up with an existing agent (it keeps its context) instead of starting a fresh one.
 
-## When a Workflow is justified
+## When workflow orchestration is justified
 
-Two gates, **both** required:
+This rung means a dedicated orchestration tool that runs many agents under deterministic, code-driven control flow (Claude Code's `Workflow` is one; adapt to whatever your harness provides). Two gates, **both** required:
 
 1. **Explicit user opt-in — a hard rule, not a judgment call.** Only run a Workflow if the user asked for multi-agent orchestration in their own words, used the "ultracode" keyword / has it on for the session, invoked a skill that calls for one, or named a saved workflow. A task that would merely *benefit* from a workflow does not count. Without opt-in: describe what a workflow could do and its rough cost, and let the user choose.
 2. **The task's shape needs deterministic orchestration** — control flow that should be code, not model judgment: fan-out over a known work-list (migrations, audits), independent finders + adversarial verification of every finding, loop-until-dry discovery, judge panels over competing designs. Scout inline first to discover the work-list, then orchestrate over it.
 
 If the work is a single investigation or a linear edit, a plain subagent (or rung 1) is correct even when workflows are available.
+
+## Degrading gracefully
+
+When your harness lacks a rung, translate the principle, not the tool:
+
+- **No workflow tool:** emulate rung 4 at rung 3 — decompose into batches of parallel subagents and iterate, with you as the orchestrator. The opt-in gate survives the translation: spawning dozens of agents is a scale decision the user must make explicitly, no matter which tool does the fan-out.
+- **No subagents at all:** rung 1 is the whole ladder. The principle becomes context hygiene — read narrowly, summarize findings as you go instead of retaining raw file dumps, and drop intermediate material once distilled. When a task is genuinely a fan-out job your tooling can't express (a 200-file migration, an exhaustive audit), say so and propose splitting it into sessions or steps the user drives, rather than grinding through it badly.
 
 ## Failure modes to avoid
 
